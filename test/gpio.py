@@ -16,9 +16,19 @@ class ButtonHandler:
         print('button pressed')
     
         self.buttonState = not self.buttonState
-        GPIO.output(LED1, self.buttonState)
 
-        time.sleep(2)
+        for i in range(1, 32):
+            GPIO.output(LED1, (i % 2 == 0))
+            GPIO.output(LED2, (i % 3 == 0))
+            GPIO.output(LED3, (i % 2 != 0))
+            GPIO.output(LED4, (i % 4 == 0))
+            time.sleep(0.1)
+
+        
+        GPIO.output(LED1, False)
+        GPIO.output(LED2, False)
+        GPIO.output(LED3, False)
+        GPIO.output(LED4, False)
 
         print ('button pressed - exit')
 
@@ -36,6 +46,8 @@ try:
 
     GPIO.add_event_detect(BTN1, GPIO.FALLING)
     GPIO.add_event_callback(BTN1, bh.button_pressed)
+
+    print ('ready')
 
     while True:
         
