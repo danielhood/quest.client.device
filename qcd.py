@@ -1,7 +1,9 @@
+import urllib3
 import sys, time
 import requests, json
 import RPi.GPIO as GPIO
 import pygame
+import platform
 
 BTN1 = 3
 LED1 = 5
@@ -9,6 +11,7 @@ LED2 = 7
 LED3 = 11
 LED4 = 13
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class GpioHandler:
     def __init__(self, audioHandler, apiClient):
@@ -78,6 +81,26 @@ class AudioHandler:
 class QuestApiClient:
     def __init__(self, baseUri):
         self.baseUri = baseUri
+        self.deviceKey = 'STAR:BLUE'
+
+    def register(self):
+        print ('Registering device: '+ platform.node() + ':' + self.deviceKey)
+        deviceJSON = '{"hostname":"' + platform.node() + '","devicekey":"' + self.deviceKey + '"}'
+        try:
+            response = requests.get(self.baseUri + '/token', data=deviceJSON, verify=False, timeout=2)
+            if (response.ok):
+                print ('Registered')
+                return True
+            elif (response.status_code == 401):
+                print ('Unauthorized')
+                return False
+            else:
+                print ('response.NotOK:' + str(response.status_code))
+                return False
+        except Exception as e:
+            print ('Unable to register with Quest server')
+            print (e)
+            return False
 
     def trigger_player_action(self, playerId):
         # TODO: REST call for action result for given playerId
@@ -85,11 +108,15 @@ class QuestApiClient:
 
 
 try:
-    apiClient = QuestApiClient('https://loco.local')
+    apiClient = QuestApiClient('https://quest.local:8443')
     audioHandler = AudioHandler()
     gpioHandler = GpioHandler(audioHandler, apiClient)
    
-    print ('ready')
+    while (not apiClient.register()):
+        print ('Device not registered. Retrying in 5s...')
+        time.sleep(5)
+
+    print ('Ready')
 
     while True:
         time.sleep(0.1)
