@@ -31,7 +31,7 @@ class GpioHandler:
 
     def decode_player_id(self):
         # TODO: decode player id from IR stream
-        return "123hl4hl2kj"
+        return "1234abcd"
 
     def button_pressed(self, channel):
         print('button_pressed() - enter')
