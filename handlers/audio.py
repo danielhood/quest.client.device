@@ -7,10 +7,10 @@ class AudioHandler:
         pygame.mixer.init()
 
         self.SoundActivate = pygame.mixer.Sound('activate.wav')
-        self.SoundActivate.set_volume(0.5)
+        self.SoundActivate.set_volume(1)
 
-        self.SoundNoQuest = pygame.mixer.Sound('noquest.wav')
-        self.SoundNoQuest.set_volume(0.5)
+        self.SoundNoQuest = pygame.mixer.Sound('no_quest.wav')
+        self.SoundNoQuest.set_volume(1)
 
         # TODO: define other sound and light animiation responses
 
