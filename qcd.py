@@ -31,7 +31,7 @@ class GpioHandler:
 
     def decode_player_id(self):
         # TODO: decode player id from IR stream
-        return 100
+        return "123hl4hl2kj"
 
     def button_pressed(self, channel):
         print('button_pressed() - enter')
@@ -81,15 +81,23 @@ class AudioHandler:
 class QuestApiClient:
     def __init__(self, baseUri):
         self.baseUri = baseUri
-        self.deviceKey = 'STAR:BLUE'
+        self.deviceKey = 'somesecretkeythattheapponlyknows'
+        self.authToken = ''
+        self.deviceType = 'STAR:BLUE'
+
 
     def register(self):
         print ('Registering device: '+ platform.node() + ':' + self.deviceKey)
-        deviceJSON = '{"hostname":"' + platform.node() + '","devicekey":"' + self.deviceKey + '"}'
+        deviceRequest = {}
+        deviceRequest['hostname'] = platform.node()
+        deviceRequest['devicekey'] = self.deviceKey
+
         try:
-            response = requests.get(self.baseUri + '/token', data=deviceJSON, verify=False, timeout=2)
+
+            response = requests.get(self.baseUri + '/token', data=json.dumps(deviceRequest), verify=False, timeout=2)
             if (response.ok):
-                print ('Registered')
+                self.authToken = response.text
+                print ('Registered: {0}'.format(self.authToken))
                 return True
             elif (response.status_code == 401):
                 print ('Unauthorized')
@@ -102,8 +110,24 @@ class QuestApiClient:
             print (e)
             return False
 
-    def trigger_player_action(self, playerId):
-        # TODO: REST call for action result for given playerId
+    def trigger_player_action(self, playerCode):
+        print ('Triggering action with server...')
+        triggerRequest = {}
+        triggerRequest['playercode'] = playerCode
+        triggerRequest['devicetype'] = self.deviceType
+
+        try:
+            response = requests.post(self.baseUri + '/trigger', data=json.dumps(triggerRequest), verify=False, timeout=2, headers={'Authorization':'Bearer {0}'.format(self.authToken)})
+            if (response.ok):
+                print ('Trigger respone: {0}'.format(response.text))
+            elif (response.status_code == 401):
+                print ('Unauthorized')
+            else:
+                print ('Trigger ERROR. Response: {0}'.format(response.status_code))
+        except Exception as e:
+            print ('Unable to trigger action with Quest server')
+            print (e)
+            return 'ERROR'
         return 'SUCCESS'
 
 
