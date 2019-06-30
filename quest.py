@@ -10,10 +10,6 @@ audioHandler = AudioHandler()
 gpioHandler = GpioHandler(audioHandler, apiClient)
 
 try:
-    while (not apiClient.register()):
-        print ('Device not registered. Retrying in 5s...')
-        time.sleep(5)
-
     print ('Ready')
 
     while True:
