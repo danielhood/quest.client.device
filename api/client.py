@@ -78,6 +78,7 @@ class QuestApiClient:
             response = requests.post(self.baseUri + '/trigger', data=json.dumps(triggerRequest), verify=False, timeout=2, headers={'Authorization':'Bearer {0}'.format(self.authToken)})
             if (response.ok):
                 print ('Trigger respone: {0}'.format(response.text))
+                return response.text
             elif (response.status_code == 401):
                 print ('Unauthorized')
             else:
@@ -85,6 +86,6 @@ class QuestApiClient:
         except Exception as e:
             print ('Unable to trigger action with Quest server')
             print (e)
-            return 'ERROR'
-        return 'SUCCESS'
+
+        return 'ERROR'
 

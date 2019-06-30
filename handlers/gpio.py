@@ -37,8 +37,8 @@ class GpioHandler:
     
         action = self.apiClient.trigger_player_action(self.decode_player_id())
 
-        if action == 'SUCCESS':
-            self.audioHandler.play_success()
+        if action == 'ACTIVATE':
+            self.audioHandler.play_activate()
 
             for i in range(1, 32):
                 GPIO.output(LED1, (i % 2 == 0))
@@ -47,9 +47,18 @@ class GpioHandler:
                 GPIO.output(LED4, (i % 4 == 0))
                 time.sleep(0.1)
 
-        elif action == 'NOQUEST':
-            # TODO:
+        elif action == 'NO_QUEST':
+            self.audioHandler.play_no_quest()
+
+            GPIO.output(LED1, 1)
+            GPIO.output(LED2, 1)
+            GPIO.output(LED3, 1)
+            GPIO.output(LED4, 1)
             time.sleep(1)
+            GPIO.output(LED1, 0)
+            GPIO.output(LED2, 0)
+            GPIO.output(LED3, 0)
+            GPIO.output(LED4, 0)
         else:
             # TODO:
             time.sleep(1)
