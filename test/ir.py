@@ -1,3 +1,5 @@
+# Attempts to parse durations of each bit direclty from GPIO
+# This doesn't seem to be reliable enough for most scans
 import RPi.GPIO as GPIO
 import time
 
