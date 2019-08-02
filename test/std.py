@@ -8,8 +8,22 @@
 #    mode2 -m | python std.py
 #
 
+
+# Aaron: 2153839348
+# Anthony: 2178501388
+
+
 import sys
 import fileinput
+
+def handleKey(key):
+    if key == 2153839348:
+        print ("Hello AARON!!!!")
+    elif key == 2178501388:
+        print ("Hello ANTHONY!!!")
+    else:
+        print ("Hello ", key, "???!?")
+
 
 def getByte(bits, offset):
     byte = 0
@@ -18,7 +32,7 @@ def getByte(bits, offset):
             byte |= 1 << i
     return byte
 
-try:
+def processInput():
     hasStart1 = False
     hasStart2 = False
     hasStart3 = False
@@ -27,7 +41,7 @@ try:
     for line in fileinput.input():
         vals = line.split()
         if len(vals) == 6 and str.isdigit(vals[0]):
-            print(vals)
+            #print(vals)
             bits[bitCount] = int(vals[0]) > 400
             bits[bitCount+1] = int(vals[2]) > 400
             bits[bitCount+2] = int(vals[4]) > 400
@@ -38,7 +52,19 @@ try:
                     hasStart1 = False
                     hasStart2 = False
                     hasStart3 = False
-                    print (getByte(bits, 31),getByte(bits, 23),getByte(bits, 15),getByte(bits, 7),getByte(bits, 0))
+
+                    #byte0 = getByte(bits,0)
+                    byte1 = getByte(bits,7)
+                    byte2 = getByte(bits,15)
+                    byte3 = getByte(bits,23)
+                    byte4 = getByte(bits,31)
+
+                    #print (getByte(bits, 31),getByte(bits, 23),getByte(bits, 15),getByte(bits, 7),getByte(bits, 0))
+                    
+                    key = byte1 + (byte2 << 8) + (byte3 << 16) + (byte4 << 24)
+                    
+                    handleKey(key)
+
                 else:
                     bitCount += 3
             elif hasStart2:
@@ -63,5 +89,10 @@ try:
                 else:
                     hasStart1 = True
                     bitCount += 3
+
+try:
+    while True:
+        processInput()
+
 except KeyboardInterrupt:
     exit()
