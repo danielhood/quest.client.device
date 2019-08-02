@@ -28,28 +28,21 @@ class GpioHandler:
     def cleanup(self):
         GPIO.cleanup()
 
-    def decode_player_id(self):
-        # TODO: decode player id from IR stream
-        return "1234abcd"
+    def show_clear():
+        GPIO.output(LED1, False)
+        GPIO.output(LED2, False)
+        GPIO.output(LED3, False)
+        GPIO.output(LED4, False)
 
-    def button_pressed(self, channel):
-        print('button_pressed() - enter')
-    
-        action = self.apiClient.trigger_player_action(self.decode_player_id())
+    def show_activate():
+        for i in range(1, 32):
+            GPIO.output(LED1, (i % 2 == 0))
+            GPIO.output(LED2, (i % 3 == 0))
+            GPIO.output(LED3, (i % 2 != 0))
+            GPIO.output(LED4, (i % 4 == 0))
+            time.sleep(0.1)
 
-        if action == 'ACTIVATE':
-            self.audioHandler.play_activate()
-
-            for i in range(1, 32):
-                GPIO.output(LED1, (i % 2 == 0))
-                GPIO.output(LED2, (i % 3 == 0))
-                GPIO.output(LED3, (i % 2 != 0))
-                GPIO.output(LED4, (i % 4 == 0))
-                time.sleep(0.1)
-
-        elif action == 'NO_QUEST':
-            self.audioHandler.play_no_quest()
-
+    def show_no_quest():
             GPIO.output(LED1, 1)
             GPIO.output(LED2, 1)
             GPIO.output(LED3, 1)
@@ -59,14 +52,31 @@ class GpioHandler:
             GPIO.output(LED2, 0)
             GPIO.output(LED3, 0)
             GPIO.output(LED4, 0)
+
+    def button_pressed(self, channel):
+        # this will just be used as a test button
+        print('button_pressed() - enter')
+    
+        action = self.apiClient.trigger_player_action("1234abcd")
+        self.handle_action(action)
+        print('button_pressed() - exit')
+
+    def handle_action(self, action):
+        print('handle_action() - enter: ', action)
+
+        if action == 'ACTIVATE':
+            self.audioHandler.play_activate()
+            self.show_activate()
+
+        elif action == 'NO_QUEST':
+            self.audioHandler.play_no_quest()
+            self.show_no_quest()
+
         else:
             # TODO:
             time.sleep(1)
+        
+        self.show_clear()
 
-        GPIO.output(LED1, False)
-        GPIO.output(LED2, False)
-        GPIO.output(LED3, False)
-        GPIO.output(LED4, False)
-
-        print ('button_pressed() - exit')
+        print ('handle_action() - exit')
 
