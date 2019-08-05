@@ -32,9 +32,8 @@ class QuestApiClient:
         try:
             response = requests.get(self.baseUri + '/token', data=json.dumps(deviceRequest), verify=False, timeout=2)
             if (response.ok):
-                self.authToken = response.text
+                self.authToken = response.json()['token']
                 print ('Registered: {0}'.format(self.authToken))
-                self.refresh_device_info()
                 return True
             elif (response.status_code == 401):
                 print ('Unauthorized')
@@ -58,10 +57,10 @@ class QuestApiClient:
                 device = response.json()
                 if (self.deviceType != device['devicetype']):
                     print ('DeviceType changed to: {0}'.format(device['devicetype']))
-                self.deviceType = device['devicetype']
+                    self.deviceType = device['devicetype']
             elif (response.status_code == 401):
-                if (self.register()):
-                    self.refresh_device_info()
+                print ('Respone 401 from device request')
+                self.register()
             else:
                 print ('response.NotOK:{0}'.format(response.status_code))
         except Exception as e:
