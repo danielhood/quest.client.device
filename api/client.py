@@ -81,7 +81,7 @@ class QuestApiClient:
             elif (response.status_code == 401):
                 print ('Unauthorized')
             else:
-                print ('Trigger ERROR. Response: {0}'.format(response.status_code))
+                print ('Trigger ERROR. Response: {0} - {1}'.format(response.status_code, response.text))
         except Exception as e:
             print ('Unable to trigger action with Quest server')
             print (e)
