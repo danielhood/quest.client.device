@@ -28,13 +28,13 @@ class GpioHandler:
     def cleanup(self):
         GPIO.cleanup()
 
-    def show_clear():
+    def show_clear(self):
         GPIO.output(LED1, False)
         GPIO.output(LED2, False)
         GPIO.output(LED3, False)
         GPIO.output(LED4, False)
 
-    def show_activate():
+    def show_activate(self):
         for i in range(1, 32):
             GPIO.output(LED1, (i % 2 == 0))
             GPIO.output(LED2, (i % 3 == 0))
@@ -42,7 +42,7 @@ class GpioHandler:
             GPIO.output(LED4, (i % 4 == 0))
             time.sleep(0.1)
 
-    def show_no_quest():
+    def show_no_quest(self):
             GPIO.output(LED1, 1)
             GPIO.output(LED2, 1)
             GPIO.output(LED3, 1)
