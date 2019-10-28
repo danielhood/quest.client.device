@@ -15,6 +15,8 @@
 
 import sys
 import fileinput
+import asyncio
+from datetime import datetime
 
 class StdinHandler:
     def __init__(self, actionHandler):
@@ -34,6 +36,9 @@ class StdinHandler:
         hasStart3 = False
         bits = [0]*54
         bitCount = 0
+
+        lastEventTime = datetime.now()
+
         for line in fileinput.input():
             vals = line.split()
             if len(vals) == 6 and str.isdigit(vals[0]):
@@ -58,8 +63,13 @@ class StdinHandler:
                         #print (getByte(bits, 31),getByte(bits, 23),getByte(bits, 15),getByte(bits, 7),getByte(bits, 0))
                         
                         key = byte1 + (byte2 << 8) + (byte3 << 16) + (byte4 << 24)
-                        # TODO: we want this to be an async call
-                        self.actionHandler.handle_action(key)
+
+
+                        currEventTime = datetime.now()
+                        timeDiff = currEventTime - lastEventTime
+                        if timeDiff.total_seconds() > 5.0:
+                            lastEventTime = currEventTime
+                            self.actionHandler.handle_action(key)
 
                     else:
                         bitCount += 3
